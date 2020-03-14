@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://TestWall.tscn" type="PackedScene" id=2]
+
+[node name="SwingTest" type="Node2D"]
+
+[node name="WallContainer" type="Node2D" parent="."]
+
+[node name="StaticBody2D3" parent="WallContainer" instance=ExtResource( 2 )]
+position = Vector2( 169.124, 415.636 )
+rotation = 0.0
+scale = Vector2( 0.5, 1 )
+
+[node name="StaticBody2D4" parent="WallContainer" instance=ExtResource( 2 )]
+position = Vector2( 863.124, 566.636 )
+rotation = 0.0
+scale = Vector2( 0.5, 1 )
+
+[node name="StaticBody2D5" parent="WallContainer" instance=ExtResource( 2 )]
+position = Vector2( 613.124, 138.636 )
+rotation = 0.0
+scale = Vector2( 0.5, 1 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 220, 264 )

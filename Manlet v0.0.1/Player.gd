@@ -19,11 +19,16 @@ const BAD_WALL_JUMP_MULT = 0.75
 
 onready var player_sprite = $AnimatedSprite
 
+var ani_state = "Idle"
+
 var wall_jump_dir = null
 var last_wall_jump_dir = null
 var wall_touch_delta = 0;
 var player_dir = "right"
 
+func _ready():
+	$"/root/Global".register_player(self)
+	
 func _physics_process(delta):
 	move(delta)
 	animate()
@@ -98,13 +103,16 @@ func move(delta):
 		velocity.x -= PLAYER_SPEED
 		player_sprite.flip_h = true
 		player_dir = "left"
+		ani_state = "Running"
 	elif input_right and !input_left:
 		velocity.x += PLAYER_SPEED
 		player_sprite.flip_h = false
 		player_dir = "right"
+		ani_state = "Running"
 	else:
 		if abs(velocity.x) < PLAYER_MAX_STOP_SPEED:
 			velocity.x = 0
+		ani_state = "Idle"
 	
 	if velocity.x > PLAYER_MAX_SPEED:
 		velocity.x = PLAYER_MAX_SPEED
@@ -119,7 +127,16 @@ func move(delta):
 		velocity.y = 0
 	
 	move_and_slide(velocity, Vector2(0, -1))
-
 	
 func animate():
-	pass
+			
+	if ani_state == "Running":
+		player_sprite.play("Running")
+		player_sprite.speed_scale = abs(velocity.x)/400
+		#delete when white space is fixed
+		player_sprite.position = Vector2(0,-21)
+		
+	if ani_state == "Idle":
+		player_sprite.play("Idle Tired")
+		player_sprite.speed_scale = 1
+		player_sprite.position = Vector2(0,-2)
