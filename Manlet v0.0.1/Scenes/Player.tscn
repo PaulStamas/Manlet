@@ -1,13 +1,13 @@
 [gd_scene load_steps=18 format=2]
 
-[ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
 [ext_resource path="res://Art/Manlet Running/running boi right1.png" type="Texture" id=2]
 [ext_resource path="res://Art/Manlet Running/running boi right2.png" type="Texture" id=3]
 [ext_resource path="res://Art/Manlet Running/running boi right3.png" type="Texture" id=4]
 [ext_resource path="res://Art/Manlet Running/running boi right4.png" type="Texture" id=5]
 [ext_resource path="res://Art/Manlet Running/running boi right5.png" type="Texture" id=6]
 [ext_resource path="res://Art/Manlet Running/running boi right6.png" type="Texture" id=7]
-[ext_resource path="res://AnimatedSprite.gd" type="Script" id=8]
+[ext_resource path="res://Scripts/AnimatedSprite.gd" type="Script" id=8]
 [ext_resource path="res://Art/Idle Tired/idle tired6.png" type="Texture" id=9]
 [ext_resource path="res://Art/Idle Tired/idle tired7.png" type="Texture" id=10]
 [ext_resource path="res://Art/Idle Tired/idle tired8.png" type="Texture" id=11]
@@ -41,6 +41,6 @@ position = Vector2( 0, -21 )
 scale = Vector2( 0.3, 0.3 )
 frames = SubResource( 1 )
 animation = "Running"
-frame = 1
+frame = 3
 playing = true
 script = ExtResource( 8 )
