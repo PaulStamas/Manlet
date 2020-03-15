@@ -19,7 +19,6 @@ const BAD_WALL_JUMP_MULT = 0.75
 
 const FIRE_SPEED = 500
 
-var gravity_on = true
 onready var player_sprite = $AnimatedSprite
 
 var state = "Idle"
@@ -45,21 +44,28 @@ var rope_angle_velocity
 var rope_angle
 var rope_length 
 var hook_shot = preload("res://Scenes/HookShot.tscn").instance()
+var rope_point_accel
 	
 func _ready():
 	$"/root/Global".register_player(self)
 	
 func _physics_process(delta):
+	get_inputs()
 	move(delta)
 	rope_swing(delta)
+	if state == "Swing":
+		velocity = Vector2(0,0)
+	move_and_slide(velocity, Vector2.UP)
 	animate()
 
-func move(delta):
+func get_inputs():
 	input_up = Input.is_action_pressed("ui_up")
 	input_wall_jump = Input.is_action_just_pressed("ui_up")
 	input_left = Input.is_action_pressed("ui_left")
 	input_right = Input.is_action_pressed("ui_right")
 	input_down = Input.is_action_pressed("ui_down")
+	
+func move(delta):
 	
 	velocity.x *= GROUND_FRICTION
 	wall_touch_delta += delta
@@ -71,11 +77,10 @@ func move(delta):
 		last_wall_jump_dir = "none";
 		if input_up:
 			velocity.y = -PLAYER_JUMP_VEL
-	else:
-		if gravity_on:
-			velocity.y += GRAVITY;
-			if input_down:
-				velocity.y += FORCE_FALL
+			
+	velocity.y += GRAVITY;
+	if input_down:
+		velocity.y += FORCE_FALL
 	
 	if state == "swing":
 		velocity.x = 0
@@ -115,6 +120,7 @@ func move(delta):
 		position.x = 500
 		position.y = 300
 		velocity.y = 0
+		
 	
 func on_wall():
 	if is_on_wall():
@@ -124,13 +130,18 @@ func on_wall():
 			if position.x < collision.position.x:
 				wall_touch_delta = 0;
 				wall_jump_dir = "left"
-				if input_right && velocity.y > 0:
+				if state == "Swing":
+					position.x += 10
+				elif input_right && velocity.y > 0:
 					velocity.y *= WALL_FRICTION
 			if position.x > collision.position.x:
 				wall_touch_delta = 0
 				wall_jump_dir = "right"
-				if input_left && velocity.y > 0:
+				if state == "Swing":
+					position.x -= 10
+				elif input_left && velocity.y > 0:
 					velocity.y *= WALL_FRICTION
+
 	
 	if input_wall_jump && wall_touch_delta < WALL_JUMP_TOUCH_DELAY && !is_on_floor():
 		wall_touch_delta = 100000
@@ -150,8 +161,6 @@ func on_wall():
 				velocity.x = PLAYER_WALL_JUMP_VEL
 				velocity.y = -PLAYER_JUMP_VEL
 			last_wall_jump_dir = "right"
-			
-	move_and_slide(velocity, Vector2(0, -1))	
 	
 func rope_swing(delta):
 	input_up = Input.is_action_pressed("ui_up")
@@ -161,37 +170,43 @@ func rope_swing(delta):
 		hook_shot.position = get_global_position()
 		get_parent().add_child(hook_shot)
 		
+	
 	if hook_shot.attached:
-		gravity_on = false
+		
 		if rope_init:
-			velocity = Vector2(0,0)
 			grapple_point = hook_shot.position
 			rope_point = position
-			rope_angle_velocity = 0
+			rope_angle_velocity = (sqrt(pow(velocity.x, 2) + pow(velocity.y, 2))) * delta
 			rope_length = sqrt(pow(grapple_point.x - position.x, 2) + pow(grapple_point.y - position.y, 2))
 			print(rope_length)
 			rope_init = false
-		
-
+			
 		rope_angle = find_angle(hook_shot.position, position)
 		var rope_angle_accel = 0.2 * cos(deg2rad(rope_angle))
+		
 		rope_angle_velocity += rope_angle_accel
 		rope_angle += rope_angle_velocity
-		if is_on_wall() or is_on_floor():
-			rope_angle_velocity = 0
-		rope_angle_velocity *= 0.99
+	
+		rope_angle_velocity *= MIDAIR_FRICTION
 		
 		rope_point.x = grapple_point.x + (rope_length * cos(deg2rad(rope_angle)))
 		rope_point.y = grapple_point.y + (rope_length * sin(deg2rad(rope_angle)))
 		
-		position.x += (rope_point.x - position.x)
-		position.y += (rope_point.y - position.y)
-		
-		if input_up:
-			velocity.y = -PLAYER_JUMP_VEL
-			velocity.x = PLAYER_WALL_JUMP_VEL
+		if input_left:
+			rope_point.x -= 5
 			
-		
+		if input_right:
+			rope_point.x += 5
+			
+		if !is_on_floor():
+			state = "Swing"
+			rope_point_accel = Vector2(rope_point.x - position.x, rope_point.y - position.y)
+			position += rope_point_accel
+	
+#			if input_up:
+#				velocity.y = -PLAYER_JUMP_VEL
+#				velocity.x = PLAYER_WALL_JUMP_VEL
+	
 	else: 
 		rope_init = true
 		
@@ -201,9 +216,15 @@ func animate():
 		player_sprite.speed_scale = 1
 		player_sprite.position = Vector2(0,-2)
 	
-	else:
+	elif state == "Running":
 		player_sprite.play("Running")
 		player_sprite.speed_scale = abs(velocity.x)/400
+		#delete when white space is fixed
+		player_sprite.position = Vector2(0,-21)
+	
+	elif state == "Swing":
+		player_sprite.play("Running")
+		player_sprite.speed_scale = 1
 		#delete when white space is fixed
 		player_sprite.position = Vector2(0,-21)
 		
