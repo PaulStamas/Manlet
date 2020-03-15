@@ -11,7 +11,7 @@ func _ready():
 	pass # Replace with function body.
 
 func _draw():
-	if $HookShot != null:
+	if $Player.hook_shot.get_class() == "Area2D":
 		draw_line($Player.position, $HookShot.position, Color(.5, 1, 0), 5)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

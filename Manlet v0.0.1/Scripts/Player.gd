@@ -37,13 +37,14 @@ var input_down
 var input_shoot
 
 #Hook shot variables
+const MAX_ROPE_LENGTH = 250
 var rope_init = true
 var grapple_point
 var rope_point
 var rope_angle_velocity
 var rope_angle
 var rope_length 
-var hook_shot = preload("res://Scenes/HookShot.tscn").instance()
+onready var hook_shot = load("res://Scenes/HookShot.tscn")
 var rope_point_accel
 	
 func _ready():
@@ -52,7 +53,7 @@ func _ready():
 func _physics_process(delta):
 	get_inputs()
 	move(delta)
-	rope_swing(delta)
+	rope_swing()
 	if state == "Swing":
 		velocity = Vector2(0,0)
 	move_and_slide(velocity, Vector2.UP)
@@ -77,6 +78,8 @@ func move(delta):
 		last_wall_jump_dir = "none";
 		if input_up:
 			velocity.y = -PLAYER_JUMP_VEL
+		if state == "Swing":
+			rope_angle_velocity = 0
 			
 	velocity.y += GRAVITY;
 	if input_down:
@@ -131,14 +134,14 @@ func on_wall():
 				wall_touch_delta = 0;
 				wall_jump_dir = "left"
 				if state == "Swing":
-					position.x += 10
+					rope_angle_velocity = 0
 				elif input_right && velocity.y > 0:
 					velocity.y *= WALL_FRICTION
 			if position.x > collision.position.x:
 				wall_touch_delta = 0
 				wall_jump_dir = "right"
 				if state == "Swing":
-					position.x -= 10
+					rope_angle_velocity = 0
 				elif input_left && velocity.y > 0:
 					velocity.y *= WALL_FRICTION
 
@@ -162,54 +165,60 @@ func on_wall():
 				velocity.y = -PLAYER_JUMP_VEL
 			last_wall_jump_dir = "right"
 	
-func rope_swing(delta):
+func rope_swing():
 	input_up = Input.is_action_pressed("ui_up")
 	input_shoot = Input.is_action_just_pressed("ui_shoot")
-	if input_shoot:
-		hook_shot.init(FIRE_SPEED)
-		hook_shot.position = get_global_position()
-		get_parent().add_child(hook_shot)
-		
-	
-	if hook_shot.attached:
-		
-		if rope_init:
-			grapple_point = hook_shot.position
-			rope_point = position
-			rope_angle_velocity = (sqrt(pow(velocity.x, 2) + pow(velocity.y, 2))) * delta
-			rope_length = sqrt(pow(grapple_point.x - position.x, 2) + pow(grapple_point.y - position.y, 2))
-			print(rope_length)
-			rope_init = false
+	if input_shoot and state != "swing":
+		if hook_shot.get_class() == "PackedScene":
+			hook_shot = hook_shot.instance()
+			get_parent().add_child(hook_shot)
+		hook_shot.init(FIRE_SPEED, player_dir, position, "Show")
+	if hook_shot.get_class() == "Area2D":
+		if sqrt(pow(hook_shot.position.x - position.x, 2) + pow(hook_shot.position.y - position.y, 2)) > MAX_ROPE_LENGTH:
+			hook_shot.init(0, "none", position, "Hide")
+		if hook_shot.attached:
 			
-		rope_angle = find_angle(hook_shot.position, position)
-		var rope_angle_accel = 0.2 * cos(deg2rad(rope_angle))
-		
-		rope_angle_velocity += rope_angle_accel
-		rope_angle += rope_angle_velocity
-	
-		rope_angle_velocity *= MIDAIR_FRICTION
-		
-		rope_point.x = grapple_point.x + (rope_length * cos(deg2rad(rope_angle)))
-		rope_point.y = grapple_point.y + (rope_length * sin(deg2rad(rope_angle)))
-		
-		if input_left:
-			rope_point.x -= 5
+			if !is_on_floor():
+				if rope_init:
+					grapple_point = hook_shot.position
+					rope_point = position
+					rope_angle_velocity = 0
+					rope_length = sqrt(pow(grapple_point.x - position.x, 2) + pow(grapple_point.y - position.y, 2))
+					print(rope_length)
+					rope_init = false
+					
+				rope_angle = find_angle(hook_shot.position, position)
+				var rope_angle_accel = 0.2 * cos(deg2rad(rope_angle))
+				
+				rope_angle_velocity += rope_angle_accel
+				rope_angle += rope_angle_velocity
 			
-		if input_right:
-			rope_point.x += 5
-			
-		if !is_on_floor():
-			state = "Swing"
-			rope_point_accel = Vector2(rope_point.x - position.x, rope_point.y - position.y)
-			position += rope_point_accel
-	
-#			if input_up:
-#				velocity.y = -PLAYER_JUMP_VEL
-#				velocity.x = PLAYER_WALL_JUMP_VEL
-	
-	else: 
-		rope_init = true
+				rope_angle_velocity *= MIDAIR_FRICTION
 		
+				rope_point.x = grapple_point.x + (rope_length * cos(deg2rad(rope_angle)))
+				rope_point.y = grapple_point.y + (rope_length * sin(deg2rad(rope_angle)))
+					
+				if input_left:
+					rope_point.x -= 5
+					
+				if input_right:
+					rope_point.x += 5
+					
+				state = "Swing"
+				rope_point_accel = Vector2(rope_point.x - position.x, rope_point.y - position.y)
+				position += rope_point_accel
+		
+				if input_up:
+					state = "Running"
+					hook_shot.init(0, "none", position, "Hide")
+					velocity.y = -PLAYER_JUMP_VEL * 0.75
+					if player_dir == "right":
+						velocity.x = abs(rope_angle_velocity) * 2
+					elif player_dir == "left":
+						velocity.x = -abs(rope_angle_velocity) * 2
+		else: 
+			rope_init = true
+			
 func animate():
 	if state == "Idle":
 		player_sprite.play("Idle Tired")
