@@ -10,12 +10,11 @@ script = ExtResource( 3 )
 [node name="WallContainer" type="Node2D" parent="."]
 
 [node name="StaticBody2D3" parent="WallContainer" instance=ExtResource( 2 )]
-position = Vector2( 169.124, 415.636 )
-rotation = 0.0
+position = Vector2( 218.124, 274.636 )
 scale = Vector2( 0.5, 1 )
 
 [node name="StaticBody2D4" parent="WallContainer" instance=ExtResource( 2 )]
-position = Vector2( 843.124, 377.636 )
+position = Vector2( 762.124, 375.636 )
 rotation = 0.0
 scale = Vector2( 0.5, 1 )
 

@@ -1,8 +1,6 @@
 extends KinematicBody2D
 
-
-var velocity: Vector2
-
+#Constants
 const GRAVITY = 30
 const GROUND_FRICTION = 0.75
 const WALL_FRICTION = 0.75
@@ -17,16 +15,16 @@ const PLAYER_MAX_STOP_SPEED = 20
 const WALL_JUMP_TOUCH_DELAY = 0.175 # seconds
 const BAD_WALL_JUMP_MULT = 0.75
 
-const FIRE_SPEED = 500
 
 onready var player_sprite = $AnimatedSprite
 
-var state = "Idle"
-
+#player variables
 var wall_jump_dir = null
 var last_wall_jump_dir = null
 var wall_touch_delta = 0;
 var player_dir = "right"
+var state = "Idle"
+var velocity: Vector2
 
 #Inputs
 var input_up
@@ -38,6 +36,9 @@ var input_shoot
 
 #Hook shot variables
 const MAX_ROPE_LENGTH = 250
+const MIN_ROPE_LENGTH = 75
+const ROPE_STRETCH = 5
+const FIRE_SPEED = 1000
 var rope_init = true
 var grapple_point
 var rope_point
@@ -65,6 +66,8 @@ func get_inputs():
 	input_left = Input.is_action_pressed("ui_left")
 	input_right = Input.is_action_pressed("ui_right")
 	input_down = Input.is_action_pressed("ui_down")
+	
+	input_shoot = Input.is_action_just_pressed("ui_shoot")
 	
 func move(delta):
 	
@@ -123,7 +126,6 @@ func move(delta):
 		position.x = 500
 		position.y = 300
 		velocity.y = 0
-		
 	
 func on_wall():
 	if is_on_wall():
@@ -166,8 +168,6 @@ func on_wall():
 			last_wall_jump_dir = "right"
 	
 func rope_swing():
-	input_up = Input.is_action_pressed("ui_up")
-	input_shoot = Input.is_action_just_pressed("ui_shoot")
 	if input_shoot and state != "swing":
 		if hook_shot.get_class() == "PackedScene":
 			hook_shot = hook_shot.instance()
@@ -186,7 +186,10 @@ func rope_swing():
 					rope_length = sqrt(pow(grapple_point.x - position.x, 2) + pow(grapple_point.y - position.y, 2))
 					print(rope_length)
 					rope_init = false
-					
+				
+				if rope_length < MIN_ROPE_LENGTH:
+					rope_length += ROPE_STRETCH
+						
 				rope_angle = find_angle(hook_shot.position, position)
 				var rope_angle_accel = 0.2 * cos(deg2rad(rope_angle))
 				
@@ -218,7 +221,7 @@ func rope_swing():
 						velocity.x = -abs(rope_angle_velocity) * 2
 		else: 
 			rope_init = true
-			
+	
 func animate():
 	if state == "Idle":
 		player_sprite.play("Idle Tired")
@@ -236,7 +239,7 @@ func animate():
 		player_sprite.speed_scale = 1
 		#delete when white space is fixed
 		player_sprite.position = Vector2(0,-21)
-		
+	
 func find_angle(point1, point2):
 	var vector1 = Vector2(point1.x - point1.x - 10, 0)
 	var vector2 = Vector2(point1.x - point2.x, point1.y - point2.y)
