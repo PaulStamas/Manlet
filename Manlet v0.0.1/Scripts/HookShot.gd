@@ -9,6 +9,9 @@ var attached = false
 var exists = false
 var direction
 # Called when the node enters the scene tree for the first time.
+func _ready():
+	$"/root/Global".register_hook_shot(self)
+	
 func init(fire_speed, dir, init_position, visibility):
 	direction = dir
 	speed = fire_speed
