@@ -1,59 +1,65 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scenes/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://Scenes/TestWall.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Main.gd" type="Script" id=4]
+[ext_resource path="res://Art/CavernyCavesTilesset24x24.png" type="Texture" id=5]
+
+[sub_resource type="ConvexPolygonShape2D" id=4]
+points = PoolVector2Array( 0, 0, 240, 0, 240, 240, 0, 240 )
+
+[sub_resource type="TileSet" id=3]
+0/name = "CavernyCavesTilesset24x24.png 0"
+0/texture = ExtResource( 5 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 240, 240 )
+0/tile_mode = 2
+0/autotile/icon_coordinate = Vector2( 1, 1 )
+0/autotile/tile_size = Vector2( 240, 240 )
+0/autotile/spacing = 0
+0/autotile/occluder_map = [  ]
+0/autotile/navpoly_map = [  ]
+0/autotile/priority_map = [  ]
+0/autotile/z_index_map = [  ]
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+1/name = "CavernyCavesTilesset24x24.png 1"
+1/texture = ExtResource( 5 )
+1/tex_offset = Vector2( 0, 0 )
+1/modulate = Color( 1, 1, 1, 1 )
+1/region = Rect2( 1680, 1440, 240, 240 )
+1/tile_mode = 0
+1/occluder_offset = Vector2( 0, 0 )
+1/navigation_offset = Vector2( 0, 0 )
+1/shape_offset = Vector2( 0, 0 )
+1/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+1/shape = SubResource( 4 )
+1/shape_one_way = false
+1/shape_one_way_margin = 1.0
+1/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 4 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+1/z_index = 0
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 4 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 319, 309 )
+position = Vector2( 72.0182, 544.245 )
 
-[node name="Wall Container" type="Node2D" parent="."]
-
-[node name="TestWall1" parent="Wall Container" instance=ExtResource( 3 )]
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="Wall Container"]
-position = Vector2( 840.032, 459.432 )
-rotation = 1.5708
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall Container/StaticBody2D2"]
-scale = Vector2( 10, 1 )
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall Container/StaticBody2D2"]
-scale = Vector2( 10, 1 )
-polygon = PoolVector2Array( 32, 32, -32, 32, -32, -32, 32, -32 )
-
-[node name="StaticBody2D" type="StaticBody2D" parent="Wall Container"]
-position = Vector2( 489.032, 542.828 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall Container/StaticBody2D"]
-scale = Vector2( 10, 1 )
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall Container/StaticBody2D"]
-scale = Vector2( 10, 1 )
-polygon = PoolVector2Array( 32, 32, -32, 32, -32, -32, 32, -32 )
-
-[node name="StaticBody2D4" type="StaticBody2D" parent="Wall Container"]
-position = Vector2( 1128.03, 168.828 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall Container/StaticBody2D4"]
-scale = Vector2( 10, 1 )
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall Container/StaticBody2D4"]
-scale = Vector2( 10, 1 )
-polygon = PoolVector2Array( 32, 32, -32, 32, -32, -32, 32, -32 )
+[node name="TileMap" type="TileMap" parent="."]
+scale = Vector2( 0.25, 0.25 )
+tile_set = SubResource( 3 )
+cell_size = Vector2( 240, 240 )
+format = 1
+tile_data = PoolIntArray( 3, 1610612737, 0, 4, 1610612737, 0, 5, 1610612737, 0, 6, 1610612737, 0, 7, 1610612737, 0, 8, 1610612737, 0, 131088, 1610612737, 0, 196609, 1610612736, 0, 196621, 1610612737, 0, 196624, 1610612737, 0, 262157, 1610612737, 0, 262160, 1610612737, 0, 327680, 1610612737, 0, 327681, 1610612737, 0, 327682, 1610612737, 0, 327689, 1610612737, 0, 327690, 1610612737, 0, 327691, 1610612737, 0, 327693, 1610612737, 0, 327696, 1610612737, 0, 393229, 1610612737, 0, 393232, 1610612737, 0, 458768, 1610612737, 0, 524304, 1610612737, 0, 589840, 1610612737, 0, 655360, 1610612737, 0, 655361, 1610612737, 0, 655362, 1610612737, 0, 655365, 1610612737, 0, 655366, 1610612737, 0, 655367, 1610612737, 0, 655368, 1610612737, 0, 655373, 1610612737, 0, 655374, 1610612737, 0, 655375, 1610612737, 0, 655376, 1610612737, 0 )
