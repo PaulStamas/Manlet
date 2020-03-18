@@ -21,6 +21,14 @@ func init(fire_speed, dir, init_position, visibility):
 		show()
 	if visibility == "Hide":
 		hide()
+	
+	$AnimatedSprite.play("default")
+	$AnimatedSprite.position.y = 0
+	if direction == "right":
+		$AnimatedSprite.flip_h = false
+	if direction == "left":
+		$AnimatedSprite.flip_h = true
+		
 	attached = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -36,4 +44,6 @@ func _process(delta):
 
 func _on_HookShot_body_entered(body):
 	if body.get_name() != "Player":
+		$AnimatedSprite.position.y -= 5
+		$AnimatedSprite.play("Attached")
 		attached = true

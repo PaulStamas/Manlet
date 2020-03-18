@@ -10,7 +10,6 @@ const FORCE_FALL = 60
 const PLAYER_SPEED = 80
 const PLAYER_JUMP_VEL = 630
 const PLAYER_WALL_JUMP_VEL = 800
-const PLAYER_MAX_SPEED = 800
 const PLAYER_MAX_STOP_SPEED = 20
 const WALL_JUMP_TOUCH_DELAY = 0.175 # seconds
 const BAD_WALL_JUMP_MULT = 0.75
@@ -38,7 +37,7 @@ var input_restart
 const MAX_ROPE_LENGTH = 350
 const MIN_ROPE_LENGTH = 75
 const ROPE_STRETCH = 5
-const FIRE_SPEED = 1000
+const FIRE_SPEED = 650
 var rope_init = true
 var grapple_point
 var rope_point
@@ -107,11 +106,9 @@ func move(delta):
 
 	if input_left and !input_right:
 		velocity.x -= PLAYER_SPEED
-		player_sprite.flip_h = true
 		player_dir = "left"
 	elif input_right and !input_left:
 		velocity.x += PLAYER_SPEED
-		player_sprite.flip_h = false
 		player_dir = "right"
 	else:
 		if abs(velocity.x) < PLAYER_MAX_STOP_SPEED:
@@ -130,12 +127,6 @@ func move(delta):
 			state = "Running"
 
 				
-	if velocity.x > PLAYER_MAX_SPEED:
-		velocity.x = PLAYER_MAX_SPEED
-	elif velocity.x < -PLAYER_MAX_SPEED:
-		velocity.x = -PLAYER_MAX_SPEED
-	
-	# DELETE THIS LATER
 	
 	
 func on_wall():
@@ -226,17 +217,18 @@ func swing():
 	rope_point.y = grapple_point.y + (rope_length * sin(deg2rad(rope_angle)))
 		
 	rope_point_accel = Vector2(rope_point.x - position.x, rope_point.y - position.y)
+		
 	position += rope_point_accel
 	
-	if input_up and state == "Swing":
+	if (input_up or input_shoot) and state == "Swing":
 		state = "Running"
 		hook_shot.init(0, "none", position, "Hide")
 		hook_shot.attached = false
 		if player_dir == "right":
-			velocity.x = abs(rope_point_accel.x) * 90
+			velocity.x = abs(rope_point_accel.x) * 100
 		elif player_dir == "left":
-			velocity.x = -abs(rope_point_accel.x) * 90
-		velocity.y = -abs(rope_point_accel.y) * 75
+			velocity.x = -abs(rope_point_accel.x) * 100
+		velocity.y = -abs(rope_point_accel.y) * 80
 		print(velocity)
 	
 func animate():
@@ -256,6 +248,11 @@ func animate():
 		player_sprite.speed_scale = 1
 		#delete when white space is fixed
 		player_sprite.position = Vector2(0,-21)
+	
+	if player_dir == "left":
+		player_sprite.flip_h = true
+	elif player_dir == "right":
+		player_sprite.flip_h = false
 	
 func find_angle(point1, point2):
 	var vector1 = Vector2(point1.x - point1.x - 10, 0)
