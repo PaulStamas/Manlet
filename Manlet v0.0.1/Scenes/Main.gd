@@ -1,18 +1,21 @@
-extends Node2D
+# Custom camera
+extends Node
 
+onready var screen_size = get
+onready var player = get_node("Player")
+onready var last_player_pos = player.get_pos()
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	var canvas_transform = get_viewport().get_canvas_transform()
+	canvas_transform[2] = last_player_pos - screen_size / 2
+	get_viewport().set_canvas_transform(canvas_transform)
 
-#func _draw():
-	#if $Player.hook_shot.get_class() == "Area2D":
-		#draw_line($Player.position, $HookShot.position, Color(.5, 1, 0), 5)
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-	#update()
+
+func update_camera():
+	# This difference will cause rounding errors that build up over time if you don't force pixel snapping or round out the values. See the 3rd tutorial for a cleaner implementation.
+	var player_offset = last_player_pos - player.get_pos()
+	last_player_pos = player.get_pos()
+
+	var canvas_transform = get_viewport().get_canvas_transform()
+	canvas_transform[2] += player_offset
+	get_viewport().set_canvas_transform(canvas_transform)

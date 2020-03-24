@@ -19,15 +19,15 @@
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
-"frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ) ],
-"loop": true,
-"name": "Running",
-"speed": 18.0
-}, {
 "frames": [ ExtResource( 14 ), ExtResource( 16 ), ExtResource( 15 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ) ],
 "loop": true,
 "name": "Idle Tired",
 "speed": 10.0
+}, {
+"frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ) ],
+"loop": true,
+"name": "Running",
+"speed": 18.0
 } ]
 
 [node name="Player" type="KinematicBody2D"]
@@ -43,5 +43,6 @@ position = Vector2( 0, -21 )
 scale = Vector2( 0.3, 0.3 )
 frames = SubResource( 1 )
 animation = "Running"
+frame = 5
 playing = true
 script = ExtResource( 8 )
