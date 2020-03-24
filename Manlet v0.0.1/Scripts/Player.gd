@@ -23,6 +23,7 @@ var wall_touch_delta = 0;
 var player_dir = "right"
 var state = "Idle"
 var velocity: Vector2
+var respawn_position: Vector2
 
 #Inputs
 var input_up
@@ -52,6 +53,7 @@ var change_state
 
 func _ready():
 	$"/root/Global".register_player(self)
+	respawn_position = position
 	
 func _physics_process(delta):
 	get_inputs()
@@ -75,7 +77,7 @@ func get_inputs():
 	input_restart = Input.is_action_just_pressed("ui_restart")
 	
 	if input_restart:
-		position = Vector2(73, 567)
+		position = respawn_position
 	
 func move(delta):
 	
