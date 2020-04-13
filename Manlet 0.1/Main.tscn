@@ -1,0 +1,88 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Manlet.tscn" type="PackedScene" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Rope.gd" type="Script" id=3]
+[ext_resource path="res://Art/HookShot/pixil-frame-0 (3).png" type="Texture" id=4]
+
+[sub_resource type="TileSet" id=1]
+0/name = "RopeSegment"
+0/texture = ExtResource( 4 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 30, 30 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Wall" type="StaticBody2D" parent="."]
+position = Vector2( -434.8, 473.149 )
+scale = Vector2( 20, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Wall"]
+texture = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall"]
+polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
+
+[node name="Wall4" type="StaticBody2D" parent="."]
+position = Vector2( 1240.66, 469.633 )
+scale = Vector2( 20, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Wall4"]
+texture = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall4"]
+polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
+
+[node name="Wall2" type="StaticBody2D" parent="."]
+position = Vector2( 1111.38, 339.507 )
+rotation = 1.5708
+scale = Vector2( 20, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Wall2"]
+texture = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall2"]
+polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
+
+[node name="Wall3" type="StaticBody2D" parent="."]
+position = Vector2( 518.902, 146.117 )
+rotation = 3.14159
+scale = Vector2( 20, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Wall3"]
+texture = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall3"]
+polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
+
+[node name="Manlet" parent="." instance=ExtResource( 1 )]
+position = Vector2( 61.2673, 375.85 )
+
+[node name="Rope" type="TileMap" parent="."]
+scale = Vector2( 0.333, 0.333 )
+tile_set = SubResource( 1 )
+cell_size = Vector2( 10, 10 )
+format = 1
+script = ExtResource( 3 )
