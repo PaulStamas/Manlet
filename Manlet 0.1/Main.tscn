@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Manlet.tscn" type="PackedScene" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://Rope.gd" type="Script" id=3]
 [ext_resource path="res://Art/HookShot/pixil-frame-0 (3).png" type="Texture" id=4]
+[ext_resource path="res://DirtTile.tres" type="TileSet" id=5]
 
 [sub_resource type="TileSet" id=1]
 0/name = "RopeSegment"
@@ -23,66 +23,20 @@
 
 [node name="Node2D" type="Node2D"]
 
-[node name="Wall" type="StaticBody2D" parent="."]
-position = Vector2( -434.8, 473.149 )
-scale = Vector2( 20, 1 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall"]
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall"]
-polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
-
-[node name="Wall4" type="StaticBody2D" parent="."]
-position = Vector2( 1240.66, 469.633 )
-scale = Vector2( 20, 1 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall4"]
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall4"]
-polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
-
-[node name="Wall2" type="StaticBody2D" parent="."]
-position = Vector2( 1111.38, 339.507 )
-rotation = 1.5708
-scale = Vector2( 20, 1 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall2"]
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall2"]
-polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
-
-[node name="Wall3" type="StaticBody2D" parent="."]
-position = Vector2( 518.902, 146.117 )
-rotation = 3.14159
-scale = Vector2( 20, 1 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Wall3"]
-texture = ExtResource( 2 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall3"]
-polygon = PoolVector2Array( 32, -32, 32, 32, -32, 32, -32, -32, 31, -32 )
-
 [node name="Manlet" parent="." instance=ExtResource( 1 )]
-position = Vector2( 61.2673, 375.85 )
+position = Vector2( 70.3839, 371.422 )
 
 [node name="Rope" type="TileMap" parent="."]
-scale = Vector2( 0.333, 0.333 )
+scale = Vector2( 0.25, 0.25 )
 tile_set = SubResource( 1 )
 cell_size = Vector2( 10, 10 )
 format = 1
 script = ExtResource( 3 )
+
+[node name="TileMap" type="TileMap" parent="."]
+scale = Vector2( 0.25, 0.25 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 160, 160 )
+cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 131073, 0, 65542, 262154, 0, 65542, 458752, 0, 4, 458753, 0, 327681, 524289, 0, 393216, 524290, 0, 5, 524291, 0, 6, 720896, 0, 0, 720897, 0, 1, 720898, 0, 1, 720899, 0, 1, 720900, 0, 1, 720901, 0, 1, 720902, 0, 1, 720903, 0, 2, 720911, 0, 0, 720912, 0, 1, 720913, 0, 1, 720914, 0, 1, 720915, 0, 1, 720916, 0, 2, 786432, 0, 65536, 786433, 0, 65537, 786434, 0, 65537, 786435, 0, 65537, 786436, 0, 65537, 786437, 0, 65537, 786438, 0, 65537, 786439, 0, 65538, 786447, 0, 65536, 786448, 0, 65537, 786449, 0, 65537, 786450, 0, 65537, 786451, 0, 65537, 786452, 0, 65538, 851968, 0, 131072, 851969, 0, 131073, 851970, 0, 131073, 851971, 0, 131073, 851972, 0, 131073, 851973, 0, 131073, 851974, 0, 131073, 851975, 0, 131074, 851983, 0, 131072, 851984, 0, 131073, 851985, 0, 131073, 851986, 0, 131073, 851987, 0, 131073, 851988, 0, 131074 )

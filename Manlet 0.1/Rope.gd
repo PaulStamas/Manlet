@@ -15,8 +15,8 @@ func _process(delta):
 	if $"/root/Global".player.hook_shot.get_class() == "Area2D":
 		if $"/root/Global".hook_shot.speed != 0:
 			clear()
-			player_position = $"/root/Global".player.position / Vector2(3.3333, 3.3333)
-			hook_position = $"/root/Global".hook_shot.position / Vector2(3.3333, 3.3333)
+			player_position = $"/root/Global".player.position / Vector2(2.5, 2.5)
+			hook_position = $"/root/Global".hook_shot.position / Vector2(2.5, 2.5)
 			var points = interpolated_line(player_position, hook_position)
 			for i in len(points):
 				var point = Vector2(points[i][0], points[i][1])

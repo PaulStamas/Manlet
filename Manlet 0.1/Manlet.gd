@@ -55,7 +55,7 @@ var float_jump_available = true
 const MAX_ROPE_LENGTH = 350
 const MIN_ROPE_LENGTH = 75
 const ROPE_STRETCH = 5
-const FIRE_SPEED = 650
+const FIRE_SPEED = 800
 var rope_init = true
 var grapple_point
 onready var hook_shot = load("res://HookShot.tscn")
@@ -67,6 +67,8 @@ var angle
 var rope_length
 var swing_accel
 var swing_vel = 0
+
+var animation_finished = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -89,23 +91,27 @@ func _get_inputs():
 		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	persistant_state()
 	_get_inputs()
 	state_transitions(delta)
-	shoot_hook()
 	match state:
 		IDLE:
 			idle(delta)
+			shoot_hook()
 		RUN:
 			run(delta)
+			shoot_hook()
 		JUMP:
 			jump(delta)
+			shoot_hook()
 		FALL:
 			fall(delta)
+			shoot_hook()
 		ON_WALL:
 			on_wall(delta)
+			shoot_hook()
 		WALL_JUMP:
 			wall_jump(delta)
+			shoot_hook()
 		SWING:
 			swing(delta)
 			
@@ -114,12 +120,15 @@ func _process(delta):
 			pass
 		HOOK_SHOT_ATTACHED:
 			hook_shot_attached()
-
-	move_and_slide(velocity, Vector2.UP)
+			
+	persistant_state()
+	velocity = move_and_slide(velocity, Vector2.UP)
 
 func set_state(new_state, delta):
 	last_state = state
 	persistant_change_state()
+	
+		
 	if last_state == WALL_JUMP:
 		wall_jump_dir = null
 		
@@ -127,7 +136,6 @@ func set_state(new_state, delta):
 		IDLE:
 			state = IDLE
 			velocity.x = 0
-			velocity.y = 0
 			player_sprite.play("Idle")
 			player_sprite.speed_scale = 1
 			
@@ -138,6 +146,8 @@ func set_state(new_state, delta):
 		JUMP:
 			state = JUMP
 			jump_init()
+			player_sprite.play("JumpStart")
+			#Jump_init in jump
 			
 		FALL:
 			state = FALL
@@ -145,6 +155,11 @@ func set_state(new_state, delta):
 				float_jump_available = true
 				float_jump_timer.set_wait_time(float_jump_window)
 				float_jump_timer.start()
+			
+			if last_state == RUN:
+				velocity.y = 0
+				
+			player_sprite.play("AirDown")
 		
 		ON_WALL:
 			state = ON_WALL
@@ -198,11 +213,15 @@ func state_transitions(delta):
 			if abs(velocity.x) < PLAYER_MAX_STOP_SPEED:
 				set_state(IDLE, delta)
 			#To FALL
-			if velocity.y >= 0:
+			if velocity.y > 0:
 				set_state(FALL, delta)
 		
 		JUMP:
-			if velocity.y >= 0:
+			if velocity.y > GRAVITY:
+				set_state(FALL, delta)
+			
+			if is_on_ceiling():
+				velocity.y = 0
 				set_state(FALL, delta)
 			
 		FALL:
@@ -280,10 +299,15 @@ func run(delta):
 	h_movement(delta)
 	#animation rate
 	var rate_scale = 30000 * delta
-	player_sprite.speed_scale = abs(velocity.x)/rate_scale
+	if rate_scale != 0:
+		player_sprite.speed_scale = abs(velocity.x)/rate_scale
 		
 func jump(delta):
+	if animation_finished:
+		animation_finished = false
+		player_sprite.play("AirUp")
 	h_movement(delta)
+	
 	
 func fall(delta):
 	h_movement(delta)
@@ -294,7 +318,7 @@ func on_wall(delta):
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
 		if position.x < collision.position.x:
-			velocity.x += 2
+			velocity.x += .2
 			wall_jump_dir = "right"
 			if input_right && velocity.y > 0:
 				velocity.y *= WALL_FRICTION
@@ -333,11 +357,11 @@ func swing(delta):
 	
 	#SWING H_MOVEMENT
 	if Input.is_action_pressed("ui_right"):
-		swing_vel -= abs(swing_vel/400)
+		swing_vel -= abs(swing_vel/200)
 		player_dir = "right"
 	elif Input.is_action_pressed("ui_left"):
 		player_dir = "left"
-		swing_vel += abs(swing_vel/400)
+		swing_vel += abs(swing_vel/200)
 
 	angle += swing_vel 
 	
@@ -353,7 +377,7 @@ func swing_init(pos1, pos2):
 	velocity *= 0
 	rope_length = sqrt(pow(pos1.x - pos2.x, 2) + pow(pos1.y - pos2.y, 2))
 	var adj = pos1.y - pos2.y
-	var theta = acos(adj / rope_length)
+	var theta = -acos(adj / rope_length)
 	if pos1.x - pos2.x < 0: 
 		print("yes")
 		theta *= -1
@@ -372,12 +396,7 @@ func jump_init():
 		
 #States2
 func hook_shot_attached():
-	if hook_shot.get_class() == "Area2D":
-		var rope_too_long = sqrt(pow(hook_shot.position.x - position.x, 2) + pow(hook_shot.position.y - position.y, 2)) > MAX_ROPE_LENGTH
-		if rope_too_long:
-			hook_shot.init(0, "none", position, "Hide")
-		else: 
-			rope_init = true
+	pass
 		
 		
 #FUNCTIONS USED IN STATES
@@ -385,9 +404,6 @@ func apply_gravity():
 	velocity.y += GRAVITY
 	if is_on_floor():
 		last_wall_jump_dir = null
-		velocity.y = 0
-	if is_on_ceiling():
-		velocity.y = 0
 		
 func shoot_hook():
 	if input_shoot:
@@ -396,6 +412,13 @@ func shoot_hook():
 				hook_shot = hook_shot.instance()
 				get_parent().add_child(hook_shot)
 			hook_shot.init(FIRE_SPEED, player_dir, position, "Show")
+	
+	if hook_shot.get_class() == "Area2D":
+		var rope_too_long = sqrt(pow(hook_shot.position.x - position.x, 2) + pow(hook_shot.position.y - position.y, 2)) > MAX_ROPE_LENGTH
+		if rope_too_long:
+			hook_shot.init(0, "none", position, "Hide")
+		else: 
+			rope_init = true
 		
 func h_movement(delta):
 	if input_left and !input_right:
@@ -410,3 +433,8 @@ func h_movement(delta):
 
 func _on_Timer_timeout():
 	float_jump_available = false
+
+
+func _on_AnimatedSprite_animation_finished():
+	if player_sprite.animation == "JumpStart":
+		animation_finished = true
