@@ -72,6 +72,7 @@ var swing_pos: Vector2
  #swing collision
 var swing_col_check = true
 var swing_colliding = false
+var swing_collider
 
 
 var animation_finished = false
@@ -273,8 +274,21 @@ func state_transitions(delta):
 				set_state(FALL, delta)
 				set_state2(NONE)
 				
-			elif is_on_floor():
-				set_state(IDLE, delta)
+			#if accelarating towards a wall while colliding
+			elif swing_colliding:
+				if $"Right Check".is_colliding():
+					print("Shit")
+					if position.x <= hook_shot.position.x:
+						set_state(FALL, delta)
+						set_state2(NONE)
+				if $"Left Check".is_colliding():
+					if position.x >= hook_shot.position.x:
+						set_state(FALL, delta)
+						set_state2(NONE)
+						
+			elif get_node("Down Check").is_colliding():
+				set_state(FALL, delta)
+				set_state2(NONE)
 				
 			elif input_up:
 				set_state(JUMP, delta)
@@ -370,8 +384,8 @@ func swing(delta):
 			player_dir = "left"
 			swing_vel += abs(swing_vel/175)
 
-	if swing_col_check:
-		if swing_colliding:
+	if swing_colliding:
+		if swing_col_check:
 			swing_vel *= -0.5
 			swing_col_check = false
 		
@@ -473,6 +487,7 @@ func _on_Swing_Check_body_entered(body):
 	if body.get_name() == "Manlet":
 		return
 	swing_colliding = true
+	swing_collider = body
 
 
 func _on_Swing_Check_body_exited(body):
@@ -481,3 +496,4 @@ func _on_Swing_Check_body_exited(body):
 		return
 	swing_colliding = false
 	swing_col_check = true
+	swing_collider = null
