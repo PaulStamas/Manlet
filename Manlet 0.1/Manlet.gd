@@ -22,12 +22,15 @@ var last_state = null
 var last_state2 = null
 
 const GRAVITY = 30
-const AMBIENT_FRICTION = .85
+const AIR_FRICTION = .99
+const AIR_ACCEL = 80
+const AIR_MAX_SPEED = 500
+const FLOOR_FRICTION = .85
 const WALL_FRICTION = .75
 const ACCEL = 80
-const PLAYER_MAX_STOP_SPEED = 20
+const PLAYER_MAX_STOP_SPEED = ACCEL * FLOOR_FRICTION
 const JUMP_VEL = -630
-const WALL_JUMP_VEL = -800
+const WALL_JUMP_VEL = Vector2(-700, -630)
 const BAD_WALL_JUMP_MULT = 0.75
 
 var velocity = Vector2(0, 0)
@@ -67,6 +70,8 @@ var angle
 var rope_length
 var swing_accel
 var swing_vel = 0
+const MAX_SWING_VEL = 0.14
+var swing_pos: Vector2
 
 var animation_finished = false
 
@@ -99,18 +104,23 @@ func _process(delta):
 			shoot_hook()
 		RUN:
 			run(delta)
+			h_movement(delta)
 			shoot_hook()
 		JUMP:
 			jump(delta)
+			h_air_movement(delta)
 			shoot_hook()
 		FALL:
 			fall(delta)
+			h_air_movement(delta)
 			shoot_hook()
 		ON_WALL:
 			on_wall(delta)
+			h_movement(delta)
 			shoot_hook()
 		WALL_JUMP:
 			wall_jump(delta)
+			h_movement(delta)
 			shoot_hook()
 		SWING:
 			swing(delta)
@@ -145,7 +155,7 @@ func set_state(new_state, delta):
 		
 		JUMP:
 			state = JUMP
-			jump_init()
+			jump_init(delta)
 			player_sprite.play("JumpStart")
 			#Jump_init in jump
 			
@@ -191,7 +201,6 @@ func state_transitions(delta):
 		if hook_shot.get_class() == "Area2D":
 			if hook_shot.attached:
 				set_state2(HOOK_SHOT_ATTACHED)
-				return
 		
 	if state == IDLE or state == RUN:
 		if input_up:
@@ -236,17 +245,13 @@ func state_transitions(delta):
 					set_state(WALL_JUMP, delta)
 			
 			elif state2 == HOOK_SHOT_ATTACHED:
+				print("yes")
 				set_state(SWING, delta)
 			
 		
 		ON_WALL:
-			if !(player_dir == "left" and input_left):
-				if !is_on_wall():
-					set_state(FALL, delta)
-					
-			elif !(player_dir == "right" and input_right):
-				if !is_on_wall():
-					set_state(FALL, delta)
+			if !is_on_wall():
+				set_state(FALL, delta)
 					
 			if input_wall_jump:
 				set_state(WALL_JUMP, delta)
@@ -258,14 +263,6 @@ func state_transitions(delta):
 		SWING:
 			if is_on_floor():
 				set_state(IDLE, delta)
-			
-			elif is_on_ceiling():
-				set_state(FALL, delta)
-				set_state2(NONE)
-			
-			elif is_on_wall():
-				set_state(ON_WALL, delta)
-				set_state2(NONE)
 				
 			elif input_up:
 				set_state(JUMP, delta)
@@ -287,8 +284,6 @@ func persistant_state():
 	elif player_dir == "right":
 		player_sprite.flip_h = false
 	
-	velocity.x *= AMBIENT_FRICTION
-	
 func persistant_change_state():
 	pass
 
@@ -296,24 +291,22 @@ func idle(delta):
 	pass
 		
 func run(delta):
-	h_movement(delta)
 	#animation rate
-	var rate_scale = 30000 * delta
+	var rate_scale = 40000 * delta
 	if rate_scale != 0:
 		player_sprite.speed_scale = abs(velocity.x)/rate_scale
+	
 		
 func jump(delta):
 	if animation_finished:
 		animation_finished = false
 		player_sprite.play("AirUp")
-	h_movement(delta)
 	
 	
 func fall(delta):
-	h_movement(delta)
+	pass
 	
 func on_wall(delta):
-	h_movement(delta)
 	velocity.x = 0;
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
@@ -329,24 +322,24 @@ func on_wall(delta):
 				velocity.y *= WALL_FRICTION
 				
 func wall_jump(delta):
-	h_movement(delta)
+	pass
 	
 func wall_jump_init():
 	if wall_jump_dir == "left":
 		if last_wall_jump_dir == "left":
-			velocity.x = -WALL_JUMP_VEL * BAD_WALL_JUMP_MULT
-			velocity.y = JUMP_VEL * 0.25
+			velocity.x = -WALL_JUMP_VEL.x * BAD_WALL_JUMP_MULT
+			velocity.y = WALL_JUMP_VEL.y * 0.25
 		else:
-			velocity.x = -WALL_JUMP_VEL
-			velocity.y = JUMP_VEL
+			velocity.x = -WALL_JUMP_VEL.x
+			velocity.y = WALL_JUMP_VEL.y
 		last_wall_jump_dir = "left"
 	elif wall_jump_dir == "right":
 		if last_wall_jump_dir == "right":
-			velocity.x = WALL_JUMP_VEL * BAD_WALL_JUMP_MULT
-			velocity.y = JUMP_VEL * 0.25
+			velocity.x = WALL_JUMP_VEL.x * BAD_WALL_JUMP_MULT
+			velocity.y = WALL_JUMP_VEL.y * 0.25
 		else:
-			velocity.x = WALL_JUMP_VEL
-			velocity.y = JUMP_VEL
+			velocity.x = WALL_JUMP_VEL.x
+			velocity.y = WALL_JUMP_VEL.y
 		last_wall_jump_dir = "right"
 		
 func swing(delta):
@@ -356,21 +349,22 @@ func swing(delta):
 	swing_vel *= .999
 	
 	#SWING H_MOVEMENT
-	if Input.is_action_pressed("ui_right"):
-		swing_vel -= abs(swing_vel/200)
-		player_dir = "right"
-	elif Input.is_action_pressed("ui_left"):
-		player_dir = "left"
-		swing_vel += abs(swing_vel/200)
+	if abs(swing_vel) < MAX_SWING_VEL:
+		if Input.is_action_pressed("ui_right"):
+			swing_vel -= abs(swing_vel/200)
+			player_dir = "right"
+		elif Input.is_action_pressed("ui_left"):
+			player_dir = "left"
+			swing_vel += abs(swing_vel/200)
+		
 
 	angle += swing_vel 
 	
 	#GET SWING POSITION
-	var pos: Vector2
-	pos.x = hook_shot.position.x - rope_length * sin(angle) 
-	pos.y = hook_shot.position.y + rope_length * cos(angle) 
+	swing_pos.x = rope_length * sin(angle) 
+	swing_pos.y = rope_length * cos(angle) 
 	
-	position = pos
+	position = Vector2(hook_shot.position.x - swing_pos.x, hook_shot.position.y + swing_pos.y)
 	
 func swing_init(pos1, pos2):
 	swing_vel = -velocity.x/6000
@@ -379,20 +373,18 @@ func swing_init(pos1, pos2):
 	var adj = pos1.y - pos2.y
 	var theta = -acos(adj / rope_length)
 	if pos1.x - pos2.x < 0: 
-		print("yes")
 		theta *= -1
 	angle = theta
 
-func jump_init():
+func jump_init(delta):
 	if last_state == SWING:
-		if player_dir == "left":
-			velocity.x = WALL_JUMP_VEL * abs(swing_vel) * 10
-		if player_dir == "right":
-			velocity.x = -WALL_JUMP_VEL * abs(swing_vel) * 10
+		velocity.x = swing_pos.y * delta * 4000 * -swing_vel
+		velocity.y = -swing_pos.x * delta * 4000 * swing_vel
 		
-		velocity.y = JUMP_VEL * abs(swing_vel) * 10
 	else:
-		velocity.y = JUMP_VEL
+			velocity.y = JUMP_VEL
+		
+	print(velocity)
 		
 #States2
 func hook_shot_attached():
@@ -427,9 +419,23 @@ func h_movement(delta):
 	elif input_right and !input_left:
 		velocity.x += ACCEL
 		player_dir = "right"
-	else:
-		velocity.x *= AMBIENT_FRICTION
-
+	else: 
+		#stops player for better feel, not redundant
+		velocity.x *= WALL_FRICTION
+		
+	velocity.x *= FLOOR_FRICTION
+		
+func h_air_movement(delta):
+	if input_left and !input_right:
+		if velocity.x > -AIR_MAX_SPEED:
+			velocity.x -= AIR_ACCEL
+			player_dir = "left"
+	elif input_right and !input_left:
+		if velocity.x < AIR_MAX_SPEED:
+			velocity.x += AIR_ACCEL
+			player_dir = "right"
+			
+	velocity.x *= AIR_FRICTION
 
 func _on_Timer_timeout():
 	float_jump_available = false
