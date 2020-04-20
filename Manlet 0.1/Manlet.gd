@@ -22,7 +22,7 @@ var last_state = null
 var last_state2 = null
 
 const GRAVITY = 30
-const AIR_FRICTION = .99
+const AIR_FRICTION = .95
 const AIR_ACCEL = 80
 const AIR_MAX_SPEED = 500
 const FLOOR_FRICTION = .85
@@ -57,21 +57,22 @@ var float_jump_available = true
 #Hook shot variables
 const MAX_ROPE_LENGTH = 350
 const MIN_ROPE_LENGTH = 75
-const ROPE_STRETCH = 5
 const FIRE_SPEED = 800
 var rope_init = true
-var grapple_point
 onready var hook_shot = load("res://HookShot.tscn")
-var rope_point_accel
 var hook_fire = true
 
-#Swing variable
+#Swing variables
 var angle
 var rope_length
 var swing_accel
 var swing_vel = 0
 const MAX_SWING_VEL = 0.14
 var swing_pos: Vector2
+ #swing collision
+var swing_col_check = true
+var swing_colliding = false
+
 
 var animation_finished = false
 
@@ -80,7 +81,7 @@ func _ready():
 	$"/root/Global".register_player(self)
 	respawn_position = position
 
-func _get_inputs():
+func _get_inputs(delta):
 	input_up = Input.is_action_pressed("ui_up")
 	input_wall_jump = Input.is_action_just_pressed("ui_up")
 	input_left = Input.is_action_pressed("ui_left")
@@ -92,11 +93,14 @@ func _get_inputs():
 	input_restart = Input.is_action_just_pressed("ui_restart")
 	
 	if input_restart:
+		set_state(FALL, delta)
+		set_state2(NONE)
+		velocity *= 0
 		position = respawn_position
 		
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	_get_inputs()
+	_get_inputs(delta)
 	state_transitions(delta)
 	match state:
 		IDLE:
@@ -112,12 +116,13 @@ func _process(delta):
 			shoot_hook()
 		FALL:
 			fall(delta)
+			if last_state == RUN:
+				h_movement(delta)
 			h_air_movement(delta)
 			shoot_hook()
 		ON_WALL:
 			on_wall(delta)
 			h_movement(delta)
-			shoot_hook()
 		WALL_JUMP:
 			wall_jump(delta)
 			h_movement(delta)
@@ -245,7 +250,6 @@ func state_transitions(delta):
 					set_state(WALL_JUMP, delta)
 			
 			elif state2 == HOOK_SHOT_ATTACHED:
-				print("yes")
 				set_state(SWING, delta)
 			
 		
@@ -261,13 +265,22 @@ func state_transitions(delta):
 				set_state(FALL, delta)
 				
 		SWING:
-			if is_on_floor():
+			#If stuck in a corner, fall and detach rope
+			if get_node("Left Check").is_colliding() and get_node("Up Check").is_colliding():
+				set_state(FALL, delta)
+				set_state2(NONE)
+			elif get_node("Right Check").is_colliding() and get_node("Up Check").is_colliding():
+				set_state(FALL, delta)
+				set_state2(NONE)
+				
+			elif is_on_floor():
 				set_state(IDLE, delta)
 				
 			elif input_up:
 				set_state(JUMP, delta)
 				set_state2(NONE)
 				
+			
 	match state2:
 		NONE:
 			pass
@@ -351,13 +364,17 @@ func swing(delta):
 	#SWING H_MOVEMENT
 	if abs(swing_vel) < MAX_SWING_VEL:
 		if Input.is_action_pressed("ui_right"):
-			swing_vel -= abs(swing_vel/200)
+			swing_vel -= abs(swing_vel/175)
 			player_dir = "right"
 		elif Input.is_action_pressed("ui_left"):
 			player_dir = "left"
-			swing_vel += abs(swing_vel/200)
-		
+			swing_vel += abs(swing_vel/175)
 
+	if swing_col_check:
+		if swing_colliding:
+			swing_vel *= -0.5
+			swing_col_check = false
+		
 	angle += swing_vel 
 	
 	#GET SWING POSITION
@@ -367,7 +384,12 @@ func swing(delta):
 	position = Vector2(hook_shot.position.x - swing_pos.x, hook_shot.position.y + swing_pos.y)
 	
 func swing_init(pos1, pos2):
-	swing_vel = -velocity.x/6000
+	#conserving momentum coming into swing
+	if abs(velocity.x) > abs(velocity.y):
+		swing_vel = -velocity.x/6000
+	else:
+		swing_vel = velocity.y/6000
+		
 	velocity *= 0
 	rope_length = sqrt(pow(pos1.x - pos2.x, 2) + pow(pos1.y - pos2.y, 2))
 	var adj = pos1.y - pos2.y
@@ -378,13 +400,11 @@ func swing_init(pos1, pos2):
 
 func jump_init(delta):
 	if last_state == SWING:
-		velocity.x = swing_pos.y * delta * 4000 * -swing_vel
-		velocity.y = -swing_pos.x * delta * 4000 * swing_vel
+		velocity.x = swing_pos.y * delta * 4300 * -swing_vel
+		velocity.y = -swing_pos.x * delta * 4300 * swing_vel
 		
 	else:
 			velocity.y = JUMP_VEL
-		
-	print(velocity)
 		
 #States2
 func hook_shot_attached():
@@ -437,6 +457,8 @@ func h_air_movement(delta):
 			
 	velocity.x *= AIR_FRICTION
 
+
+#signals
 func _on_Timer_timeout():
 	float_jump_available = false
 
@@ -444,3 +466,18 @@ func _on_Timer_timeout():
 func _on_AnimatedSprite_animation_finished():
 	if player_sprite.animation == "JumpStart":
 		animation_finished = true
+
+#collision signals
+func _on_Swing_Check_body_entered(body):
+	#makes exception for player
+	if body.get_name() == "Manlet":
+		return
+	swing_colliding = true
+
+
+func _on_Swing_Check_body_exited(body):
+	#makes exception for player
+	if body.get_name() == "Manlet":
+		return
+	swing_colliding = false
+	swing_col_check = true
