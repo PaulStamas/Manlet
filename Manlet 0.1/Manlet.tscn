@@ -12,140 +12,140 @@
 
 [sub_resource type="AtlasTexture" id=1]
 flags = 4
-atlas = ExtResource( 1 )
+atlas = ExtResource( 5 )
 region = Rect2( 0, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=2]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 250, 0, 250, 250 )
+atlas = ExtResource( 5 )
+region = Rect2( 500, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=3]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 500, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=4]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 750, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 250, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=5]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 1000, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 500, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=6]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 1250, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 750, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=7]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 1500, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 1000, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=8]
 flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 1750, 0, 250, 250 )
+atlas = ExtResource( 2 )
+region = Rect2( 1250, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=9]
 flags = 4
-atlas = ExtResource( 5 )
+atlas = ExtResource( 4 )
 region = Rect2( 0, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=10]
 flags = 4
-atlas = ExtResource( 5 )
-region = Rect2( 500, 0, 250, 250 )
+atlas = ExtResource( 4 )
+region = Rect2( 250, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=11]
 flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 250, 250 )
+atlas = ExtResource( 4 )
+region = Rect2( 500, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=12]
 flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 250, 0, 250, 250 )
+atlas = ExtResource( 6 )
+region = Rect2( 0, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=13]
 flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 500, 0, 250, 250 )
+atlas = ExtResource( 6 )
+region = Rect2( 250, 0, 250, 250 )
 
 [sub_resource type="AtlasTexture" id=14]
-flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 750, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=15]
-flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 1000, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=16]
-flags = 4
-atlas = ExtResource( 2 )
-region = Rect2( 1250, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=17]
-flags = 4
-atlas = ExtResource( 4 )
-region = Rect2( 0, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=18]
-flags = 4
-atlas = ExtResource( 4 )
-region = Rect2( 250, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=19]
-flags = 4
-atlas = ExtResource( 4 )
-region = Rect2( 500, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=20]
-flags = 4
-atlas = ExtResource( 6 )
-region = Rect2( 0, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=21]
-flags = 4
-atlas = ExtResource( 6 )
-region = Rect2( 250, 0, 250, 250 )
-
-[sub_resource type="AtlasTexture" id=22]
 flags = 4
 atlas = ExtResource( 7 )
 region = Rect2( 0, 0, 250, 250 )
 
+[sub_resource type="AtlasTexture" id=15]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=16]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 250, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=17]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 500, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=18]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 750, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=19]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 1000, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=20]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 1250, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=21]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 1500, 0, 250, 250 )
+
+[sub_resource type="AtlasTexture" id=22]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 1750, 0, 250, 250 )
+
 [sub_resource type="SpriteFrames" id=23]
 animations = [ {
-"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ) ],
-"loop": true,
-"name": "Idle",
-"speed": 10.0
-}, {
-"frames": [ SubResource( 9 ), SubResource( 10 ) ],
+"frames": [ SubResource( 1 ), SubResource( 2 ) ],
 "loop": true,
 "name": "AirDown",
 "speed": 8.0
 }, {
-"frames": [ SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 14 ), SubResource( 15 ), SubResource( 16 ) ],
+"frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ) ],
 "loop": true,
 "name": "Running",
 "speed": 18.0
 }, {
-"frames": [ SubResource( 17 ), SubResource( 18 ), SubResource( 19 ) ],
+"frames": [ SubResource( 9 ), SubResource( 10 ), SubResource( 11 ) ],
 "loop": true,
 "name": "AirUp",
 "speed": 12.0
 }, {
-"frames": [ SubResource( 20 ), SubResource( 21 ), SubResource( 22 ) ],
+"frames": [ SubResource( 12 ), SubResource( 13 ), SubResource( 14 ) ],
 "loop": false,
 "name": "JumpStart",
 "speed": 40.0
+}, {
+"frames": [ SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ) ],
+"loop": true,
+"name": "Idle",
+"speed": 10.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=24]
@@ -168,45 +168,43 @@ resource_local_to_scene = true
 0/shapes = [  ]
 0/z_index = 0
 
-[node name="Player" type="Node"]
-
-[node name="Manlet" type="KinematicBody2D" parent="."]
-position = Vector2( 433.026, 361.152 )
+[node name="Manlet" type="KinematicBody2D"]
 script = ExtResource( 3 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="Manlet"]
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 scale = Vector2( 0.25, 0.25 )
 frames = SubResource( 23 )
 animation = "AirDown"
+frame = 1
 playing = true
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Manlet"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 position = Vector2( 1.5, 1.5 )
 scale = Vector2( 0.33, 0.33 )
 polygon = PoolVector2Array( 38, 90, -46, 90, -46, -70, 38, -70 )
 
-[node name="WallJumpTimer" type="Timer" parent="Manlet"]
+[node name="WallJumpTimer" type="Timer" parent="."]
 
-[node name="Swing Check" type="Area2D" parent="Manlet"]
+[node name="Swing Check" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Manlet/Swing Check"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Swing Check"]
 shape = SubResource( 24 )
 
-[node name="Left Check" type="RayCast2D" parent="Manlet"]
+[node name="Left Check" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( -30, 0 )
 
-[node name="Right Check" type="RayCast2D" parent="Manlet"]
+[node name="Right Check" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 30, 0 )
 
-[node name="Up Check" type="RayCast2D" parent="Manlet"]
+[node name="Up Check" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 0, -30 )
 
-[node name="Down Check" type="RayCast2D" parent="Manlet"]
+[node name="Down Check" type="RayCast2D" parent="."]
 enabled = true
-cast_to = Vector2( 0, 30 )
+cast_to = Vector2( 0, 35 )
 
 [node name="Rope" type="TileMap" parent="."]
 scale = Vector2( 0.25, 0.25 )
@@ -216,7 +214,7 @@ collision_layer = 2
 collision_mask = 2
 format = 1
 script = ExtResource( 8 )
-[connection signal="animation_finished" from="Manlet/AnimatedSprite" to="Manlet" method="_on_AnimatedSprite_animation_finished"]
-[connection signal="timeout" from="Manlet/WallJumpTimer" to="Manlet" method="_on_Timer_timeout"]
-[connection signal="body_entered" from="Manlet/Swing Check" to="Manlet" method="_on_Swing_Check_body_entered"]
-[connection signal="body_exited" from="Manlet/Swing Check" to="Manlet" method="_on_Swing_Check_body_exited"]
+[connection signal="animation_finished" from="AnimatedSprite" to="." method="_on_AnimatedSprite_animation_finished"]
+[connection signal="timeout" from="WallJumpTimer" to="." method="_on_Timer_timeout"]
+[connection signal="body_entered" from="Swing Check" to="." method="_on_Swing_Check_body_entered"]
+[connection signal="body_exited" from="Swing Check" to="." method="_on_Swing_Check_body_exited"]

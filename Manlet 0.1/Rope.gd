@@ -12,6 +12,7 @@ func _ready():
 	pass
 
 func _process(delta):
+	global_position = Vector2(0,0)
 	if $"/root/Global".player.hook_shot.get_class() == "Area2D":
 		if $"/root/Global".hook_shot.speed != 0:
 			clear()

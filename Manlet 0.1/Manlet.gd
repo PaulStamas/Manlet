@@ -182,6 +182,7 @@ func set_state(new_state, delta):
 		
 		WALL_JUMP:
 			state = WALL_JUMP
+			player_sprite.play("AirUp")
 			wall_jump_init()
 			
 		SWING:
@@ -246,17 +247,20 @@ func state_transitions(delta):
 				else:
 					set_state(IDLE, delta)
 			
+			elif state2 == HOOK_SHOT_ATTACHED:
+				set_state(SWING, delta)
+				
 			elif last_state == ON_WALL:
 				if input_up and float_jump_available:
 					set_state(WALL_JUMP, delta)
-			
-			elif state2 == HOOK_SHOT_ATTACHED:
-				set_state(SWING, delta)
 			
 		
 		ON_WALL:
 			if !is_on_wall():
 				set_state(FALL, delta)
+				
+			if get_node("Down Check").is_colliding():
+				set_state(IDLE, delta)
 					
 			if input_wall_jump:
 				set_state(WALL_JUMP, delta)
@@ -277,7 +281,6 @@ func state_transitions(delta):
 			#if accelarating towards a wall while colliding
 			elif swing_colliding:
 				if $"Right Check".is_colliding():
-					print("Shit")
 					if position.x <= hook_shot.position.x:
 						set_state(FALL, delta)
 						set_state2(NONE)
@@ -353,6 +356,7 @@ func wall_jump(delta):
 	
 func wall_jump_init():
 	if wall_jump_dir == "left":
+		print("left")
 		if last_wall_jump_dir == "left":
 			velocity.x = -WALL_JUMP_VEL.x * BAD_WALL_JUMP_MULT
 			velocity.y = WALL_JUMP_VEL.y * 0.25
@@ -361,6 +365,7 @@ func wall_jump_init():
 			velocity.y = WALL_JUMP_VEL.y
 		last_wall_jump_dir = "left"
 	elif wall_jump_dir == "right":
+		print("right")
 		if last_wall_jump_dir == "right":
 			velocity.x = WALL_JUMP_VEL.x * BAD_WALL_JUMP_MULT
 			velocity.y = WALL_JUMP_VEL.y * 0.25
@@ -399,10 +404,7 @@ func swing(delta):
 	
 func swing_init(pos1, pos2):
 	#conserving momentum coming into swing
-	if abs(velocity.x) > abs(velocity.y):
-		swing_vel = -velocity.x/6000
-	else:
-		swing_vel = velocity.y/6000
+	swing_vel = -velocity.x/6000
 		
 	velocity *= 0
 	rope_length = sqrt(pow(pos1.x - pos2.x, 2) + pow(pos1.y - pos2.y, 2))
@@ -416,7 +418,7 @@ func jump_init(delta):
 	if last_state == SWING:
 		velocity.x = swing_pos.y * delta * 4300 * -swing_vel
 		velocity.y = -swing_pos.x * delta * 4300 * swing_vel
-		
+	
 	else:
 			velocity.y = JUMP_VEL
 		
